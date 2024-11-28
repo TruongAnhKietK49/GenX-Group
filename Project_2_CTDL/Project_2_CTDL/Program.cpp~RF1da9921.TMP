@@ -1,0 +1,654 @@
+﻿#include <bits/stdc++.h>
+#include <fstream>
+#include <stdlib.h>
+#include <conio.h> 
+#include <windows.h>
+
+using namespace std;
+
+string centerText(const string& text) {
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+	int consoleWidth = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+
+	int padding = (consoleWidth - text.length()) / 2;
+	if (padding > 0) {
+		return string(padding, ' ') + text;
+	}
+	return text;
+}
+
+void printCentered(const string& text) {
+	cout << centerText(text);
+}
+
+
+class Employee {
+	string userName;
+	string passWord;
+	string fullName;
+	string address;
+	string phone;
+	string email;
+	int count;
+	vector<pair<string, string>> employee;
+public:
+	Employee(string _userName = "", string _passWord = "", string _fullName = "", string _address = "", string _phone = "", string _email = "", int _count = NULL)
+		: userName(_userName), passWord(_passWord), fullName(_fullName), address(_address), phone(_phone), email(_email), count(_count) {
+		loadEmployConfig();
+		string file = _userName + ".txt";
+		loadData(file);
+	}
+
+	string getUserName() const { return userName; }
+	string getPassWord() const { return passWord; }
+	string getFullName() const { return fullName; }
+	string getAddress() const { return address; }
+	string getPhone() const { return phone; }
+	string getEmail() const { return email; }
+	int getCount() const { return count; }
+
+	void setUserName(const string& _userName) { userName = _userName; }
+	void setPassWord(const string& _passWord) { passWord = _passWord; }
+	void setFullName(const string& _fullName) { fullName = _fullName; }
+	void setAddress(const string& _address) { address = _address; }
+	void setPhone(const string& _phone) { phone = _phone; }
+	void setEmail(const string& _email) { email = _email; }
+	void setCount(const int& _count) { count = _count; }
+
+	//load thông tin cá nhân của Employee
+	void loadData(const string& fileName) {
+		fstream fileInfo(fileName, ios::in);
+		if (fileInfo.is_open()) {
+			int lineCount = 0;
+			string line;
+			while (getline(fileInfo, line)) {
+				switch (lineCount) {
+				case 0:
+					fullName = line;
+					break;
+				case 1:
+					address = line;
+					break;
+				case 2:
+					phone = line;
+					break;
+				case 3:
+					email = line;
+					break;
+				case 4:
+					count = stoi(line); // Chuyển đổi từ string sang int
+					break;
+				}
+				lineCount++;
+			}
+			fileInfo.close();
+		}
+		string user = fileName.substr(0, fileName.size() - 4);
+		fstream fileUser("./Employees.txt", ios::in);
+		if (fileUser.is_open()) {
+			string User, Pin;
+			while (getline(fileUser, User) && getline(fileUser, Pin)) {
+				if (user == User) {
+					userName = User;
+					passWord = Pin;
+				}
+			}
+			fileUser.close();
+		}
+	}
+
+	//Load tài khoản Employee khi chạy code
+	void loadEmployConfig() {
+		fstream fi("./Employees.txt", ios::in);
+		if (fi.is_open()) {
+			string user, password;
+			while (getline(fi,user) && getline(fi, password)) {
+				employee.push_back({ user, password });
+			}
+			fi.close();
+		}
+		else cout << "Cant open file Employees.txt to read!";
+	}
+
+	//Update mật khẩu sau khi chỉnh sửa
+	void updatePassword(Employee& tmp, string user) {
+		for (auto& it : employee) {
+			if (it.first == user) {
+				it.second = tmp.getPassWord(); // Cập nhật mật khẩu
+				break;
+			}
+		}
+		fstream fo("./Employees.txt", ios::out);
+		if (fo.is_open()) {
+			for (const auto& it : employee) {
+				fo << it.first << endl << it.second << endl;
+			}
+			fo.close();
+		}
+		else {
+			cout << "Cant open file Employees.txt!" << endl;
+		}
+	}
+
+
+	//Update lại thông tin sau khi chỉnh sửa
+	void updateInfoEmployee(Employee& tmp, string userName) {
+		string file = userName + ".txt";
+		fstream fo(file, ios::out); // Mở tệp ở chế độ ghi với chế độ cắt bỏ
+		if (fo.is_open()) {
+			fo << tmp.getFullName() << endl;
+			fo << tmp.getAddress() << endl;
+			fo << tmp.getPhone() << endl;
+			fo << tmp.getEmail() << endl;
+			fo << tmp.getCount() << endl;
+			fo.close();
+		}
+		else {
+			cout << "Cant open file: " << file << " to write!" << endl;
+		}
+	}
+
+
+	//Check xem đăng nhập khớp tài khoản
+	bool checkLogin(const string& username, const string& password) {
+		for (const auto& account : employee) {
+			if (account.first == username && account.second == password)
+				return true;
+		}
+		return false;
+	}
+	bool checkUser(const string& username) {
+		for (const auto& account : employee) {
+			if (account.first == username)
+				return true;
+		}
+		return false;
+	}
+
+	void addEmployee() {
+		printCentered("Enter username: ");
+		getline(cin, userName);
+
+		while (checkUser(userName)) {
+			printCentered("Username already exists! Please choose another username: ");
+			getline(cin, userName);
+		}
+
+		printCentered("Enter passWord: ");
+		getline(cin, passWord);
+
+		printCentered("Enter fullName: ");
+		getline(cin, fullName);
+
+		printCentered("Enter address : ");
+		getline(cin, address);
+
+		printCentered("Enter phone: ");
+		getline(cin, phone);
+
+		printCentered("Enter email: ");
+		getline(cin, email);
+	}
+
+	void menuEmployee() {
+		printCentered("1. Show info of account!\n");
+		printCentered("2. Change password!\n");
+		printCentered("3. Exit!\n");
+	}
+
+	void displayInfo() const {
+		printCentered("-->information<--\n");
+		printCentered("User: " + userName + "\n");
+		printCentered("Password: " + passWord + "\n");
+		printCentered("Name: " + fullName + "\n");
+		printCentered("Address: " + address + "\n");
+		printCentered("Phone: " + phone + "\n");
+		printCentered("Email: " + email + "\n\n");
+	}
+
+	void Show() const {
+		displayInfo();
+	}
+};
+class Administer {
+private:
+	string userName;
+	string passWord;
+	vector<Employee> employees;
+	vector<pair<string, string>> adminAccounts; //Lưu trữ user và pass
+	
+public: 
+	Administer(string _userName = "", string _passWord = "") {
+		userName = _userName;
+		passWord = _passWord;
+		loadAminConfig();
+		loadEmployeesFromFile();
+	}
+
+	//Load tài khoản Admin trong file admin.txt
+	void loadAminConfig() {
+		fstream fi("./admin.txt", ios::in);
+		if (fi.is_open()) {
+			string username, password;
+			while (fi >> username >> password) {
+				adminAccounts.push_back({ username, password });
+			}
+			fi.close();
+		}
+	}
+
+	//Load toàn bộ thông tin Employee để show or delete
+	void loadEmployeesFromFile() {
+		string userName, passWord, fullName, address, phone, email;
+		int count;
+		fstream fi("./Employees.txt", ios::in);
+		if (fi.is_open()) {
+			while (getline(fi, userName) && getline(fi, passWord)) {
+				string file = userName + ".txt";
+				fstream fe(file, ios::in);
+				if (fe.is_open()) {
+					getline(fe, fullName);
+					getline(fe, address);
+					getline(fe, phone);
+					getline(fe, email);
+					fe >> count;
+					fe.close();
+
+					employees.emplace_back(userName, passWord, fullName, address, phone, email, count);
+				}
+				else {
+					printCentered("Cant open file name: " + file + " of the employee!\n");
+				}
+			}
+			fi.close();
+		}
+		else {
+			printCentered("Cant open file Employees.txt to read!\n");
+		}
+	}
+
+	//Check admin đăng nhập
+	bool checkLogin(const string& username, const string& password) {
+		for (const auto& account : adminAccounts) {
+			if (account.first == username && account.second == password) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	//Tạo tài khoản Employee
+	void addEmployee(const Employee& employee) {
+		employees.push_back(employee);
+		saveEmployeesToFile(employees, employee.getUserName());
+		system("cls");
+		printCentered("Add successful Employee!\n");
+	}
+
+	//Lưu trữ account của employee vừa tạo
+	void saveEmployeesToFile(vector<Employee>& employees, const string& userName) {
+		fstream fo("./Employees.txt", ios::out);
+		if (fo.is_open()) {
+			for (const Employee& emp : employees) {
+				fo << emp.getUserName() << endl
+					<< emp.getPassWord() << endl;
+			}
+			fo.close();
+			string fileName = userName + ".txt";
+			fstream fe(fileName, ios::out);
+			if (fe.is_open()) {
+				for (Employee& emp : employees) {
+					if (userName == emp.getUserName()) {
+						emp.setCount(0);
+						fe << emp.getFullName() << endl
+							<< emp.getAddress() << endl
+							<< emp.getPhone() << endl
+							<< emp.getEmail() << endl
+							<< emp.getCount() << endl;
+					}
+				}
+				fe.close();
+			}
+			else printCentered("Cant open file name: " + fileName + " of the employee to write!\n");
+		}
+		else {
+			cerr << "Không thể mở file Employees.txt để ghi!" << endl;
+		}
+	}
+
+	//Xóa tài khoản Employee
+	void deleteEmployee(const string& userName) {
+		employees.erase(remove_if(employees.begin(), employees.end(),
+			[&userName](const Employee& emp) {
+				return emp.getUserName() == userName;
+			}), employees.end());
+		updateAfterDelete(employees, userName);
+		system("cls");
+		printCentered("Delete Successful Employee!\n");
+	}
+
+	//Update lại danh sách Employees.txt sau khi xóa đi nhân viên
+	void updateAfterDelete(vector<Employee>& emp, string userName) {
+		fstream fo("./Employees.txt", ios::out);
+		if (fo.is_open()) {
+			for (const Employee& tmp : emp) {
+				fo << tmp.getUserName() << endl;
+				fo << tmp.getPassWord() << endl;
+			}
+			fo.close();
+			string file = userName + ".txt";
+			if (remove(file.c_str()) == 0) {
+				printCentered("Delete " + file + " success!\n");
+			}
+			else printCentered("Delete " + file + " fail!\n");
+		}
+		else printCentered("Cant open file Employees.txt to update!\n");
+	}
+
+	void findEmployee(string& userEmployee) {
+		for (Employee it : employees) {
+			if (it.getUserName() == userEmployee) {
+				string file = userEmployee + ".txt";
+				it.loadData(file);
+				it.Show();
+				break;
+			}
+			else printCentered("Cant find userEmployee " + userEmployee +"\n");
+		}
+	}
+
+	void displayMenu() {
+		printCentered("1. Add employee\n");
+		printCentered("2. Delete employee\n");
+		printCentered("3. Find employee\n");
+		printCentered("4. Show employees list\n");
+		printCentered("5. Update info Employee\n");
+		printCentered("6. Exit\n");
+		printCentered("Enter your choice: ");
+	}
+
+	void menuInfo() {
+		printCentered("1. Update fullName\n");
+		printCentered("2. Update address\n");
+		printCentered("3. Update phone\n");
+		printCentered("4. Update email\n");
+		printCentered("5. Exit!\n");
+		printCentered("Enter your choice: ");
+	}
+
+	//Hàm trả về giá trị Employee
+	vector<Employee>& getEmployees()  {
+		return employees;
+	}
+};
+
+int menuStart() {
+	system("cls");
+	printCentered("-----Menu-----\n");
+	printCentered("1. Admin\n");
+	printCentered("2. Employee\n");
+	printCentered("3. Exit!\n");
+	printCentered("Enter choice: ");
+	int choice; cin >> choice;
+	return choice;
+}
+void inpUpdateEmployee(Employee& tmp, string userEmployee);
+void logAdmin() {
+	string user, pin = "";
+	system("cls");
+	printCentered("User: ");
+	getline(cin, user);
+	printCentered("Pin: ");
+	
+	char key;
+	while (true) {
+		key = _getch();
+		if (key == '\r') {
+			break;
+		}
+		else if (key == '\b') {
+			if (!pin.empty()) {
+				cout << "\b \b";
+				pin.pop_back();
+			}
+		}
+		else {
+			pin += key;
+			cout << "*";
+		}
+	}
+	
+	Administer admin(user, pin);
+
+	if (admin.checkLogin(user, pin)) {
+		system("cls");
+		bool check = true;
+		while (check)
+		{
+			admin.displayMenu();
+			int choice; cin >> choice;
+			cin.ignore();
+			
+			Employee tmp;
+			string userEmployee;
+
+			switch (choice)
+			{
+			case 1:
+				system("cls");
+				tmp.addEmployee();
+				admin.addEmployee(tmp);
+				break;
+			case 2:
+				system("cls");
+				printCentered("Enter user of Employee to detele: ");
+				getline(cin, userEmployee);
+				admin.deleteEmployee(userEmployee);
+				break;
+			case 3:
+				system("cls");
+				printCentered("Enter userName to find: ");
+				getline(cin, userEmployee);
+				admin.findEmployee(userEmployee);
+				break;
+			case 4:
+				system("cls");
+				printCentered("------List Employees------\n");
+				for (Employee emp : admin.getEmployees()) {
+					string data = emp.getUserName();
+					data = data + ".txt";
+					emp.loadData(data);
+					emp.Show();
+					printCentered("---------------------\n");
+				}
+				break;
+			case 5:
+				system("cls");
+				printCentered("Enter userEmployee to update: ");
+				getline(cin, userEmployee);
+				for (Employee& emp : admin.getEmployees()) {
+
+					if (emp.getUserName() == userEmployee) {
+						inpUpdateEmployee(emp, userEmployee);
+					}
+					else {
+						system("cls");
+						printCentered("Not found employee! Please re-enter....!\n");
+					}
+				}
+				break;
+			case 6:
+				check = false;
+				break;
+			default:
+				printCentered("Invalid value! Please re-enter value!\n");
+				break;
+			}
+		}
+	}
+	else printCentered("Incorrect User or Pin! Please re-enter...\n");
+}
+
+void inpUpdateEmployee(Employee& tmp, string userEmployee)
+{
+	system("cls");
+	bool check = true;
+	while (check)
+	{
+		Administer ad;
+		ad.menuInfo();
+		int choice; cin >> choice;
+		cin.ignore();
+		string newName, newAddress, newPhone, newEmail;
+		switch (choice)
+		{
+		case 1:
+			printCentered("Enter newName: ");
+			getline(cin, newName);
+			tmp.setFullName(newName);
+			break;
+		case 2:
+			printCentered("Enter newAddres: ");
+			getline(cin, newAddress);
+			tmp.setAddress(newAddress);
+			break;
+		case 3:
+			printCentered("Enter newPhone: ");
+			getline(cin, newPhone);
+			tmp.setPhone(newPhone);
+			break;
+		case 4:
+			printCentered("Enter newEmail: ");
+			getline(cin, newEmail);
+			tmp.setEmail(newEmail);
+			break;
+		case 5:
+			check = false;
+			break;
+		default:
+			printCentered("Invalid value! Please re-enter value!\n");
+			break;
+		}
+		tmp.updateInfoEmployee(tmp, userEmployee);
+		system("cls");
+		printCentered("Update successful!\n");
+	}
+}
+void logEmployee() {
+	int cnt = 0;
+	bool check = true;
+	while (check) {
+		system("cls");
+		string user, pin;
+		printCentered("User: ");
+		getline(cin, user);
+		printCentered("Pin: ");
+		getline(cin, pin);
+		Employee emp(user, pin);
+		system("cls");
+		if (emp.checkLogin(user, pin)) {
+			int count = emp.getCount() + 1;
+			emp.setCount(count);
+			if (count == 1) {
+				string oldPass, newPass, againNewPass;
+				printCentered("First login, need to change password!\n");
+				printCentered("Enter password to verify: ");
+				getline(cin, oldPass);
+				if (oldPass == pin) {
+					printCentered("Enter newPass: ");
+					getline(cin, newPass);
+					printCentered("Enter newPass again: ");
+					getline(cin, againNewPass);
+					if (newPass == againNewPass) {
+						emp.setPassWord(newPass);
+						emp.updatePassword(emp, user);
+						emp.updateInfoEmployee(emp, user);
+						printCentered("Cập nhật mật khẩu thành công!\n");
+					}
+				}
+			}
+			bool checked = true;
+			while (checked == true) {
+				emp.menuEmployee();
+				printCentered("Enter your choice: ");
+				int choice; cin >> choice;
+				string fileName = user + ".txt";
+				cin.ignore();
+				if (choice == 1) {
+					emp.loadData(fileName);
+					system("cls");
+					emp.Show();
+				}
+				else if (choice == 2) {
+					string oldPass, newPass, againNewPass;
+					printCentered("Enter password to verify: ");
+					getline(cin, oldPass);
+					if (oldPass == pin) {
+						printCentered("Enter newPass: ");
+						getline(cin, newPass);
+						printCentered("Enter newPass again: ");
+						getline(cin, againNewPass);
+						if (newPass == oldPass) {
+							printCentered("You have entered your old password.\n");
+							checked = false;
+							break;
+						}
+						else if(newPass == againNewPass) {
+							emp.setPassWord(newPass);
+							emp.updatePassword(emp, user);
+							emp.updateInfoEmployee(emp, user);
+							printCentered("Update password successful!\n");
+						}
+						else if (newPass != againNewPass) {
+							printCentered("Incorrect password!\n");
+							checked = false;
+							break;
+						}
+					}
+					else {
+						printCentered("Incorrect verify password!\n");
+						Sleep(1500);
+						break;
+					}
+				}
+				else if (choice == 3) {
+					checked = false;
+					check = false;
+					break;
+				}
+			}
+		}
+		else {
+			printCentered("Incorrect user or pin! Please re-enter...wait 2 seconds\n");
+			Sleep(2000);
+			cnt++;
+			if (cnt == 3) {
+				check = false;
+				printCentered("Enter wrong password 3 times, automatically exit\n");
+			}
+		}
+	}
+}
+
+int main() {
+	bool check = true;
+	while (check) {
+		int choice = menuStart();
+		if (choice == 1) {
+			cin.ignore();
+			logAdmin();
+		}
+		else if (choice == 2) {
+			cin.ignore();
+			logEmployee();
+		}
+		else {
+			check = false;
+			break;
+		}
+	}
+
+	return 0;
+}
+

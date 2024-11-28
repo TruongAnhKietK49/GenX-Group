@@ -1,0 +1,57 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Document\\HCMUE\\N\u0103m II\\C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u\\Project_2_CTDL\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{FC7B5091-CEB5-4B88-B1DF-844B5F750831}|Project_2_CTDL\\Project_2_CTDL.vcxproj|D:\\Document\\HCMUE\\N\u0103m II\\C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u\\Project_2_CTDL\\Project_2_CTDL\\Program.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{FC7B5091-CEB5-4B88-B1DF-844B5F750831}|Project_2_CTDL\\Project_2_CTDL.vcxproj|solutionrelative:Project_2_CTDL\\Program.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 514,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cpp",
+              "DocumentMoniker": "D:\\Document\\HCMUE\\N\u0103m II\\C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u\\Project_2_CTDL\\Project_2_CTDL\\Program.cpp",
+              "RelativeDocumentMoniker": "Project_2_CTDL\\Program.cpp",
+              "ToolTip": "D:\\Document\\HCMUE\\N\u0103m II\\C\u1EA5u tr\u00FAc d\u1EEF li\u1EC7u\\Project_2_CTDL\\Project_2_CTDL\\Program.cpp",
+              "RelativeToolTip": "Project_2_CTDL\\Program.cpp",
+              "ViewState": "AQIAAJwCAAAAAAAAAAAwwLwCAAAbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-15T09:41:14.4Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedHeight": 69,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            }
+          ]
+        },
+        {
+          "DockedHeight": 135,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
