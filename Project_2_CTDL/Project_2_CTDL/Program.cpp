@@ -497,6 +497,7 @@ void logAdmin() {
 			Employee tmp;
 			string userEmployee;
 
+			bool kTra = false;
 			switch (choice)
 			{
 			case 1:
@@ -543,14 +544,15 @@ void logAdmin() {
 
 					if (emp.getUserName() == userEmployee) {
 						inpUpdateEmployee(emp, userEmployee);
-					}
-					else {
-						system("cls");
-						printCentered("Not found employee! Please re-enter....!\n", 3);
+						kTra = true;
+						break;
 					}
 				}
-				printCentered("Press any key to continue....", 7);
-				_getch();
+				if (kTra == false) {
+					printCentered("Can't find userEmployee " + userEmployee + " to update!\n", 6);
+					printCentered("Press any key to continue....", 7);
+					_getch();
+				}
 				break;
 			case 6:
 				check = false;
@@ -571,8 +573,7 @@ void logAdmin() {
 void inpUpdateEmployee(Employee& tmp, string userEmployee)
 {
 	system("cls");
-	bool check = true;
-	while (check)
+	while (true)
 	{
 		Administer ad;
 		ad.menuInfo();
@@ -614,7 +615,7 @@ void inpUpdateEmployee(Employee& tmp, string userEmployee)
 			printCentered("Update successful!\n", 10);
 			break;
 		case 5:
-			check = false;
+			return;
 			break;
 		default:
 			printCentered("Invalid value! Please re-enter value!\n", 4);
